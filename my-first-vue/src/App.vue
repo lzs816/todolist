@@ -1,5 +1,5 @@
 <template>
-  <div id="app" v-bind:class="[state]">
+  <div id="app" v-bind:class="[state]" v-scroll="scrollFn">
     <header class="header">
       <div class="box">
         <h1>Lzs's Blog</h1>
@@ -21,6 +21,7 @@
         <li><router-link to='/about'>关于</router-link></li>
       </ul>
     </nav>
+    <router-view class="view"></router-view>
   </div>
 </template>
 
@@ -32,15 +33,36 @@ export default {
     };
   },
   components: {},
+  directives: {
+    scroll: {
+      // 指令的定义
+      inserted(el, binding) {
+        var cb = binding.value;
+        el.addEventListener("mousewheel", function(e) {
+          var direction = e.deltaY > 0 ? "down" : "up";
+          // var direction = e.deltaY;
+          cb(direction);
+        });
+      }
+    }
+  },
   methods: {
-    rollDown: function() {
+    rollDown() {
       this.state = "roll-down";
     },
-    rollUp: function() {
+    rollUp() {
       this.state = "roll-up";
     },
     handleScroll() {
-      console.log(1)
+      console.log(1);
+    },
+    scrollFn(direction) {
+      console.log(direction);
+      if (direction == "down") {
+        this.state = "roll-down";
+      } else {
+        this.state = "roll-up";
+      }
     }
   }
 };
@@ -126,7 +148,7 @@ export default {
     .icon-up {
       position: absolute;
       top: 200%;
-      left: 10px;
+      right: 10px;
       z-index: 2;
       display: block;
       width: 60px;
@@ -153,13 +175,16 @@ export default {
         height: 100%;
         line-height: 100px;
         text-align: center;
-        color: white;
+        color: #fff;
         a {
           position: relative;
           display: block;
           width: 100%;
           height: 100%;
-          color: white;
+          color: #fff;
+          &:hover {
+            color: aqua;
+          }
         }
         .router-link-active::before {
           content: "[";
@@ -178,6 +203,29 @@ export default {
           font-size: 28px;
         }
       }
+    }
+  }
+  .view {
+    width: 100%;
+    height: calc(100% - 100px);
+    /*margin: 0 auto;*/
+    overflow-y: scroll;
+  }
+  .svg {
+    margin: 30px auto;
+    border: 10px solid aquamarine;
+    width: 7.5rem;
+    background: #fff;
+    svg {
+      rect {
+        border: 1px solid #000;
+      }
+    }
+    .black {
+      background: #000;
+    }
+    .white {
+      background: #fff;
     }
   }
 }
